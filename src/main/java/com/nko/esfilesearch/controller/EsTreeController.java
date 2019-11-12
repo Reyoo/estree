@@ -1,7 +1,6 @@
 package com.nko.esfilesearch.controller;
 
 import com.nko.esfilesearch.common.base.AjaxResult;
-import com.nko.esfilesearch.model.EsTreeModel;
 import com.nko.esfilesearch.service.EsTreeService;
 import io.swagger.annotations.*;
 import org.elasticsearch.common.Strings;
@@ -60,6 +59,8 @@ public class EsTreeController {
                               @RequestParam(defaultValue = "") String icon) {
         return  esTreeService.addTreeNode(pid,nodename,icon);
     }
+
+
     @ApiOperation(value = "删除树节点", httpMethod = "DELETE")
     @ApiImplicitParams({@ApiImplicitParam(name="id",value = "待删除节点ID",required = true,paramType = "query")})
     @GetMapping(value = "/treeindex/remove")
@@ -68,13 +69,14 @@ public class EsTreeController {
         return  esTreeService.removeTreeNode(id);
     }
 
-    @ApiOperation(value = "获取树节点", httpMethod = "GET")
-    @ResponseBody
-    @GetMapping(value = "/treeindex/gettree")
-    public String getTreeJson(){
-        return esTreeService.getTreeJson();
-    }
 
+    @ApiOperation(value = "获取树节点", httpMethod = "GET")
+    @ApiImplicitParams({@ApiImplicitParam(name="dept",value = "部门",required = false,paramType = "query")})
+    @GetMapping(value = "/treeindex/gettree")
+    @ResponseBody
+    public AjaxResult getTreeJson(@RequestParam(required = false) String dept){
+        return esTreeService.getTreeJson(dept);
+    }
 
 
     @ApiOperation(value = "更新树节点", httpMethod = "DELETE")
@@ -84,6 +86,7 @@ public class EsTreeController {
     public AjaxResult updateTreeNode(@RequestParam(required = true) String id,String nodename){
         return  esTreeService.updateTreeNode(id,nodename);
     }
+
 
 
 }

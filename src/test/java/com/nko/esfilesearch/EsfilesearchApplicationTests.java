@@ -1,13 +1,9 @@
 package com.nko.esfilesearch;
 
 import com.nko.esfilesearch.client.ElkRestClient;
-import com.nko.esfilesearch.common.base.EsTreeEnum;
 import com.nko.esfilesearch.common.init.ElkMappingInit;
 import com.nko.esfilesearch.model.EsTreeModel;
-import com.nko.esfilesearch.model.TreeDataModel;
 import com.nko.esfilesearch.service.EsTreeService;
-import com.nko.esfilesearch.service.IndexSearchService;
-import org.elasticsearch.common.Strings;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +14,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 class EsfilesearchApplicationTests {
 
-    @Autowired
-    IndexSearchService indexSearchService;
+//    @Autowired
+//    IndexSearchService indexSearchService;
 
     @Autowired
     ElkRestClient elkRestClient;
@@ -36,7 +32,7 @@ class EsfilesearchApplicationTests {
         EsTreeModel treeDataModel = new EsTreeModel();
         String treeIndex = "treeindex";
         String treeType= "treetype";
-        indexSearchService.findTreeWithType(treeType,treeIndex,treeDataModel);
+//        indexSearchService.findTreeWithType(treeType,treeIndex,treeDataModel);
         System.out.println(treeDataModel.getId());
     }
 
@@ -63,7 +59,7 @@ class EsfilesearchApplicationTests {
     void getTreeLoads() {
 //Integer id ,String nodeName,Integer parentId
         try {
-            esTreeService.getTreeJson();
+            esTreeService.getTreeJson("OA");
         }catch (Exception e){
             e.printStackTrace();
         }

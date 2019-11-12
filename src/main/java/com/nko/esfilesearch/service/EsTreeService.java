@@ -2,6 +2,7 @@ package com.nko.esfilesearch.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.nko.esfilesearch.client.ElkRestClient;
@@ -120,18 +121,20 @@ public class EsTreeService {
     }
 
     //4.返回树JSON
-    public String getTreeJson(){
+    public AjaxResult getTreeJson(String dept){
          //先获取跟节点 pid 为空的节点集合 转为List
         Client client = elkRestClient.getClient();
-
-        List<TreeDataModel<EsTreeModel>> treeDataModels = new ArrayList<>();
+        SearchResponse searchResponse =null;
+                List<TreeDataModel<EsTreeModel>> treeDataModels = new ArrayList<>();
         //获取根节点
-        SearchResponse searchResponse = client.prepareSearch().setIndices(treeIndex).setTypes(treeType)
-//                .setQuery(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("parentId", ""))
-//                .must(QueryBuilders.termQuery("nodename", "OA")))
-        .get();
+        if(StrUtil.hasEmpty(dept)){
+            searchResponse = client.prepareSearch().setIndices(treeIndex).setTypes(treeType).get();
+        }else{
+            searchResponse = client.prepareSearch().setIndices(treeIndex).setTypes(treeType)
+                    .setQuery(QueryBuilders.boolQuery().must(QueryBuilders.termQuery("parentId", ""))
+                            .must(QueryBuilders.termQuery("nodename", dept))).get();
+        }
         System.out.println(searchResponse.getHits().getTotalHits());
-//
         for(SearchHit searchHit : searchResponse.getHits().getHits()){
             treeDataModels.add(new TreeDataModel(searchHit.getSource().get(EsTreeEnum.id.name()).toString()
                     ,searchHit.getSource().get(EsTreeEnum.nodename.name()).toString()
@@ -145,10 +148,14 @@ public class EsTreeService {
 //        for(EsTreeModel esTreeModel:rootNodes){
 //
 //        }
-         return String.valueOf(searchResponse.getHits().getTotalHits());
+         return AjaxResult.success(String.valueOf(searchResponse.getHits().getTotalHits()));
     }
 
-
+    /**
+     * 构造树
+     * @param nodes
+     * @return
+     */
     public  List<TreeDataModel<EsTreeModel>> build_Trees(List<TreeDataModel<EsTreeModel>> nodes) {
 
         if (nodes == null) {
